@@ -1,12 +1,19 @@
 @import "tailwindcss";
 
 @theme {
+    /* Exterior colors */
     --color-irish-green: #40C575;
     --color-british-racing-green: #004225;
+
+    /* Interior colors */
+    /* Note: Need to update '@source inline' below when adding new colors */
     --color-interior-tartufo: #b77b5f;
     --color-interior-ivory: #e3e3e5;
     --color-interior-fjord: #88a8cf;
 }
+
+/* Safe-list for interior colors */
+@source inline('{,}bg-interior-{tartufo,ivory,fjord}');
 
 body {
     @apply dark:text-white;
