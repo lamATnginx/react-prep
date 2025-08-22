@@ -1,7 +1,7 @@
-export enum InteriorOptions {
+export enum InteriorColors {
     TARTUFO = "Tartufo",
     IVORY = "Ivory",
     FJORD = "Fjord"
 }
 
-export type Interior = `${InteriorOptions}`;
+export type Interior = `${InteriorColors}`;
