@@ -1,5 +1,5 @@
 import { Gears } from '@/types/GearType';
-import { getContentHeight, logError } from '@/util/util';
+import { boundValue, getContentHeight, logError } from '@/util/util';
 
 import { useEffect, useRef } from 'react';
 import { useSpring, animated } from '@react-spring/web';
@@ -45,9 +45,9 @@ export default function ShiftKnob() {
         style.y.set(gearPos);
     }, [])
 
-    const bind = useDrag(({ movement: [, my], last }) => {
+    const bind = useDrag(({ movement: [, my], last , down}) => {
             // Movement logic
-            const [_, rowHeight] = getGridInfo();
+            const [contentHeight, rowHeight] = getGridInfo();
             const currentGear = currentGearRef.current
             const newGear =  currentGear + Math.round(my / rowHeight);
 
@@ -55,22 +55,12 @@ export default function ShiftKnob() {
                 // Slot into nearest gear
                 const slottedPos = newGear * rowHeight;
                 currentGearRef.current = newGear; 
-                return api.start({ y: slottedPos });
+                return api.start({ y: boundValue(0, contentHeight - rowHeight, slottedPos) });
             }
-            
-            return api.start({ y: (currentGear * rowHeight) + my });
-        },
-        {
-            bounds: () => {
-                const [, rowHeight] = getGridInfo();
-                const defaultGearIndex = gearValues.findIndex((value) => value === DEFAULT_GEAR);
-                const lowEnd = defaultGearIndex;
-                const highEnd = (gearValues.length - 1) - defaultGearIndex;
-                const minHeight = (-lowEnd) * rowHeight;
-                const maxHeight = (highEnd) * rowHeight;
-                return { top: minHeight, bottom: maxHeight }
-            }
-        }   
+
+            const offsetPos = (currentGear * rowHeight) + my;
+            return api.start({ y: boundValue(0, contentHeight - rowHeight, offsetPos), immediate: down });
+        }
     )
     
     return (
