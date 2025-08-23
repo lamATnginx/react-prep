@@ -1,53 +1,81 @@
 import { Gears } from '@/types/GearType';
-import { getContentHeight } from '@/util/util';
+import { getContentHeight, logError } from '@/util/util';
 
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useSpring, animated } from '@react-spring/web';
 import { useDrag } from '@use-gesture/react';
+import { DEFAULT_GEAR } from '@/constants/GearConstants';
 
 export default function ShiftKnob() {
-    const baseContainerRef = useRef<HTMLDivElement>(null);
-    const [style, api] = useSpring(() => ({ y: 0 }));
+    const COMPONENT_NAME = "ShiftKnob";
     const gearValues = Object.values(Gears);
 
-    const bind = useDrag(({ down, offset: [, oy], last }) => {
-            if(last) {
-                // Snap logic
-                const baseContainer = baseContainerRef.current;
-                if(baseContainer) {
-                    const [ baseContainerHeight ] = getContentHeight(baseContainer);
-                    const rowHeight = baseContainerHeight / 4;
-                    const gearIndex = Math.round(oy / rowHeight);
-                    const slottedHeight = gearIndex * rowHeight
+    const currentGearRef = useRef(0);
+    const baseContainerRef = useRef<HTMLDivElement>(null);
+    const [style, api] = useSpring(() => ({ y: 0 }));
+    
+    const getGridInfo = () => {
+        const baseContainer = baseContainerRef.current;
+        let contentHeight: number;
+        let rowHeight: number;
 
-                    api.start({ y: slottedHeight, immediate: down})
-                }
+        if(baseContainer) {
+            const [ baseContainerHeight ] = getContentHeight(baseContainer);
+            contentHeight = baseContainerHeight;
+            rowHeight = baseContainerHeight / gearValues.length;
+        }
+        else {
+            throw new Error(logError('baseContainerRef is undefined. Unable to get gridInfo such as content and row height.', COMPONENT_NAME))
+        }
+
+        return [contentHeight, rowHeight];
+    }
+
+    const getStartingYPos = () => {
+        const [_, rowHeight] = getGridInfo();
+        const gearIndex: number = gearValues.findIndex((value) => value === DEFAULT_GEAR);
+        const gearPos = gearIndex * rowHeight
+        return [gearPos, gearIndex];
+    }
+
+    useEffect(() => {
+        const [gearPos, gearIndex] = getStartingYPos();
+
+        currentGearRef.current = gearIndex;
+        style.y.set(gearPos);
+    }, [])
+
+    const bind = useDrag(({ movement: [, my], last }) => {
+            // Movement logic
+            const [_, rowHeight] = getGridInfo();
+            const currentGear = currentGearRef.current
+            const newGear =  currentGear + Math.round(my / rowHeight);
+
+            if(last) { 
+                // Slot into nearest gear
+                const slottedPos = newGear * rowHeight;
+                currentGearRef.current = newGear; 
+                return api.start({ y: slottedPos });
             }
-            else {  
-                // Freeflow movement
-                api.start({ y: oy, immediate: down })
-            }
+            
+            return api.start({ y: (currentGear * rowHeight) + my });
         },
         {
             bounds: () => {
-                const baseContainer = baseContainerRef.current;
-
-                if(baseContainer) {
-                    const [ baseContainerHeight ] = getContentHeight(baseContainer);
-                    const rowHeight = baseContainerHeight / 4;
-                    const minHeight = 0;
-                    const maxHeight = baseContainerHeight - rowHeight;
-
-                    return {top: minHeight, bottom: maxHeight}
-                }
-                return { }
+                const [, rowHeight] = getGridInfo();
+                const defaultGearIndex = gearValues.findIndex((value) => value === DEFAULT_GEAR);
+                const lowEnd = defaultGearIndex;
+                const highEnd = (gearValues.length - 1) - defaultGearIndex;
+                const minHeight = (-lowEnd) * rowHeight;
+                const maxHeight = (highEnd) * rowHeight;
+                return { top: minHeight, bottom: maxHeight }
             }
         }   
     )
     
     return (
       <div 
-        className='bg-neutral-700 grid grid-rows-4 justify-items-start items-start p-5 w-48 h-1/2' 
+        className={`bg-neutral-700 grid justify-items-start items-start p-5 w-48 h-1/3 grid-rows-${gearValues.length}`} 
         ref={baseContainerRef}
         >
         {/* Gear Indicators */}

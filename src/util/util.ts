@@ -12,3 +12,7 @@ export const getContentHeight = (element: HTMLElement) => {
     
     return [elementHeight, elementWidth]
 }
+
+export const logError = (message: string, componentName: string) => {
+    return `Error @ ${componentName} : ${message}`
+}
