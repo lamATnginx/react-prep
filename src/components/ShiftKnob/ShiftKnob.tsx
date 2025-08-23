@@ -6,7 +6,11 @@ import { useSpring, animated } from '@react-spring/web';
 import { useDrag } from '@use-gesture/react';
 import { DEFAULT_GEAR } from '@/constants/GearConstants';
 
-export default function ShiftKnob() {
+interface Props {
+    onShiftComplete?: (gear: number) => void;
+}
+
+export default function ShiftKnob({ onShiftComplete }: Props ) {
     const COMPONENT_NAME = "ShiftKnob";
     const gearValues = Object.values(Gears);
 
@@ -55,6 +59,9 @@ export default function ShiftKnob() {
                 // Slot into nearest gear
                 const slottedPos = newGear * rowHeight;
                 currentGearRef.current = newGear; 
+                if(onShiftComplete) {
+                    onShiftComplete(newGear);
+                }
                 return api.start({ y: boundValue(0, contentHeight - rowHeight, slottedPos) });
             }
 
@@ -65,7 +72,7 @@ export default function ShiftKnob() {
     
     return (
       <div 
-        className={`bg-neutral-700 grid justify-items-start items-start p-5 w-48 h-1/3 grid-rows-${gearValues.length}`} 
+        className={'bg-neutral-700 grid justify-items-start items-start p-5 w-48 h-1/3'} 
         ref={baseContainerRef}
         >
         {/* Gear Indicators */}
