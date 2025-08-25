@@ -16,7 +16,3 @@
 @source inline('{,}bg-{tartufo,ivory,fjord}');
 
 @source inline('{,}row-start-{{1..6}}');
-
-body {
-    @apply dark:text-white;
-}

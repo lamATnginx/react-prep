@@ -1,4 +1,4 @@
-import ShiftKnob from "@/components/ShiftKnob/ShiftKnob"
+import GearSelector from "@/components/GearSelector/GearSelector"
 
 function Homepage() {
   const handleShiftComplete = (gear: number) => {
@@ -7,7 +7,7 @@ function Homepage() {
 
   return (
     <div className="h-screen w-screen">
-      <ShiftKnob onShiftComplete={handleShiftComplete}/>
+      <GearSelector onShiftComplete={handleShiftComplete}/>
     </div>
   )
 }
