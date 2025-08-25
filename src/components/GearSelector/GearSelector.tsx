@@ -1,5 +1,5 @@
 import { Gears } from '@/types/GearType';
-import { animate, createScope } from 'animejs';
+import { animate, createScope, type Scope } from 'animejs';
 import { useEffect, useRef } from 'react';
 
 interface Props {
@@ -9,7 +9,7 @@ interface Props {
 export default function ShiftKnob({ onShiftComplete }: Props ) {
     const gearValues = Object.values(Gears);
     const rootRef = useRef(null);
-    const scopeRef = useRef(null);
+    const scopeRef = useRef<Scope>(null);
     const gearButtonConfig = {
         skewX: 6,
         skewY: 10,
@@ -36,7 +36,11 @@ export default function ShiftKnob({ onShiftComplete }: Props ) {
             }
         });
 
-        return () => scopeRef.current.revert();
+        if(scopeRef.current) {
+            // Cleanup
+            const scope = scopeRef.current;
+            return () => scope.revert();
+        }
     }, []);
 
     const handleGearClick = (event: React.MouseEvent<HTMLButtonElement>) => {
