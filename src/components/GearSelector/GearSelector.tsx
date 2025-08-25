@@ -62,7 +62,7 @@ export default function ShiftKnob({ onShiftComplete }: Props ) {
             gearValues.map((gearValue, index) => 
                 <button 
                     type='button' 
-                    className={`gear bg-neutral-700 row-start-${index + 1} col-start-1 p-5 sm:p-6 lg:p-8 text-xl rounded-bl-lg text-white`} 
+                    className={`gear bg-neutral-700 row-start-${index + 1} col-start-1 p-5 sm:p-6 lg:p-8 text-xl rounded-bl-lg text-white backdrop-blur-3xl shadow-xl/20 cursor-pointer`} 
                     key={`gear-${gearValue}`}
                     value={gearValue}
                     onClick={handleGearClick}
