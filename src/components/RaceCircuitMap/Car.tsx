@@ -1,3 +1,4 @@
+import { COLORS } from "@/constants/RaceCircuitConstants";
 import { useFrame } from "@react-three/fiber";
 import { useRef } from "react";
 import type { CatmullRomCurve3, Mesh } from "three";
@@ -27,7 +28,7 @@ export default function Car({ pathCurve }: Props) {
     return (
         <mesh ref={carRef} scale={[1, 1, 1]}>
           <boxGeometry args={[10, 10, 10]} />
-          <meshStandardMaterial color="blue" />
+          <meshStandardMaterial color={COLORS.CAR} />
         </mesh>
       );
 }

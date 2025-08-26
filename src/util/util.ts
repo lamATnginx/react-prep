@@ -16,3 +16,7 @@ export const getContentHeight = (element: HTMLElement) => {
 export const logError = (message: string, componentName: string) => {
     return `Error @ ${componentName} : ${message}`
 }
+
+export const convertToRadians = (degrees: number) => degrees * (Math.PI / 180);
+
+export const convertToDegrees = (radians: number) => radians * (180 / Math.PI);

@@ -109,7 +109,7 @@ export default function ShiftKnob({ onShiftComplete }: Props ) {
     
     return (
       <div 
-        className={'gear-container grid auto-rows-min gap-12 justify-items-start items-start pl-36 mt-auto w-1/6 h-1/3'}
+        className={'gear-container absolute grid auto-rows-min gap-12 justify-items-start items-start pl-36 mt-12 w-1/6 h-1/3'}
         ref={rootRef}
         >
         {/* Gear Indicators */}

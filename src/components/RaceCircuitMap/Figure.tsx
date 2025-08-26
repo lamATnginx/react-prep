@@ -4,16 +4,19 @@ import * as THREE from "three";
 import { SVGLoader } from "three/examples/jsm/Addons.js";
 
 import Points from './Points';
-import { Z_COORDINATE } from '@/constants/RaceCircuitConstants';
+import { COLORS, Z_COORDINATE } from '@/constants/RaceCircuitConstants';
 import Car from './Car';
+import WorkBuilding from './WorkBuilding';
+import ObservationDeck from './ObservationDeck';
+import FanSeating from './FanSeating';
 
 interface Props {
     svgPath?: string // relative to the ROOT of the project
 }
 
 export default function Figure({ svgPath = "./src/assets/racetrack.svg" }: Props) {
-    const pointsData: { label: string, coordinate: [x: number, y: number, z: number]}[] = useMemo(() => {
-        return [
+    const pointsData: { label: string, coordinate: [x: number, y: number, z: number]}[] =
+        [
             {
                 label: "Work",
                 coordinate: [133, 20.2, Z_COORDINATE], // Work
@@ -24,10 +27,9 @@ export default function Figure({ svgPath = "./src/assets/racetrack.svg" }: Props
             },
             {
                 label: "Me",
-                coordinate: [-233, -20, Z_COORDINATE], // Me
+                coordinate: [-194, -100, Z_COORDINATE], // Me
             }
-        ]
-        }, []);
+        ];
 
     const svgData = useMemo(() => useLoader(SVGLoader, svgPath), [svgPath]);
     const shapes = svgData.paths.flatMap((path) => path.toShapes(true));
@@ -61,11 +63,14 @@ export default function Figure({ svgPath = "./src/assets/racetrack.svg" }: Props
     return(
         <>
             <lineSegments geometry={edgesGeometry} scale={[1, 1, 1]}>
-                <lineBasicMaterial color="#FF8000" />
+                <lineBasicMaterial color={COLORS.TRACK} />
             </lineSegments>
 
             <Points pointsData={pointsData} />
             <Car pathCurve={pathCurve} />
+            <WorkBuilding/>
+            <ObservationDeck/>
+            <FanSeating/>
         </>
     )
 }
