@@ -1,43 +1,54 @@
 import { useLoader } from '@react-three/fiber'
+import { useMemo } from 'react';
 import * as THREE from "three";
 import { SVGLoader } from "three/examples/jsm/Addons.js";
-import Points from './Points';
-import { useMemo } from 'react';
 
-export default function Figure() {
-    const scale = 0.08;
-    const zCoord = 0.3;
-    const pointsData = useMemo(() => {
+import Points from './Points';
+import { OBJECT_SCALE, Z_COORDINATE } from '@/constants/RaceCircuitConstants';
+
+interface Props {
+    svgPath?: string // relative to the ROOT of the project
+}
+
+export default function Figure({ svgPath = "./src/assets/racetrack.svg" }: Props) {
+    const pointsData: { label: string, coordinate: [x: number, y: number, z: number]}[] = useMemo(() => {
         return [
             {
                 label: "Work",
-                coordinates: [10, 2.2, zCoord], // Work
+                coordinate: [10, 2.2, Z_COORDINATE], // Work
             },
-             {
+                {
                 label: "Projects",
-                coordinates: [-10, 7.5, zCoord], // Projects
+                coordinate: [-10, 7.5, Z_COORDINATE], // Projects
             },
             {
                 label: "Me",
-                coordinates: [-18.3, -2, zCoord], // Me
+                coordinate: [-18.3, -2, Z_COORDINATE], // Me
             }
         ]
-      }, []);
+        }, []);
 
-    const svgData = useLoader(SVGLoader, "./src/assets/racetrack.svg");
+    const svgData = useMemo(() => useLoader(SVGLoader, svgPath), [svgPath]);
     const shapes = svgData.paths.flatMap((path) => path.toShapes(true));
-    const geometry = new THREE.ExtrudeGeometry(shapes, {
-        depth: 5,
-        });
-    geometry.center();
+    const geometry = useMemo(() => {
+        const geo = new THREE.ExtrudeGeometry(shapes, {
+            depth: 5,
+            });
+
+        geo.center();
+        return geo;
+    }, [shapes]);
+    const edgesGeometry = useMemo(() => {
+        return new THREE.EdgesGeometry(geometry); // Extract edges from geometry
+    }, [geometry]);
 
     return(
         <>
-            <mesh geometry={geometry} scale={scale}>
-                <meshPhongMaterial attach="material" color="#FF8000" side={THREE.DoubleSide}/>
-            </mesh>
+            <lineSegments geometry={edgesGeometry} scale={OBJECT_SCALE}>
+                <lineBasicMaterial color="#FF8000" />
+            </lineSegments>
 
-            <Points points={pointsData} />
+            <Points pointsData={pointsData} />
         </>
     )
 }
