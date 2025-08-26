@@ -9,7 +9,6 @@ interface Props {
 }
 
 export default function Points({ pointsData }: Props) {
-    
     const handlePointClick = (_: ThreeEvent<MouseEvent>) => {
         console.log("Hi")
     }
@@ -23,8 +22,8 @@ export default function Points({ pointsData }: Props) {
                         onClick={handlePointClick}
                         position={point.coordinate}
                         >
-                        <sphereGeometry args={[0.4, 32, 32]} />
-                        <meshStandardMaterial color="blue" wireframe/>
+                        <sphereGeometry args={[4, 32, 32]} />
+                        <meshStandardMaterial color="blue"/>
                         <Html><p className="cursor-pointer">{point.label}</p></Html>
                     </mesh>
                 ))
