@@ -32,6 +32,7 @@ export default function Figure({ svgPath = "./src/assets/racetrack.svg" }: Props
         ];
 
     const isCarAtTargetState = useState(false);
+    const [animateRowIndex, setAnimateRowIndex] = useState<number | undefined>(undefined);
     const [carTarget, setCarTarget] = useState<{label: string | undefined, coordinate: [x: number, y: number, z: number] | undefined}>({ label: undefined, coordinate: undefined })
     const svgData = useMemo(() => useLoader(SVGLoader, svgPath), [svgPath]);
     const shapes = svgData.paths.flatMap((path) => path.toShapes(true));
@@ -70,6 +71,8 @@ export default function Figure({ svgPath = "./src/assets/racetrack.svg" }: Props
     }
 
     const handleCarStop = () => {
+        const index = pointsData.findIndex((point) => point.label === carTarget.label)
+        setAnimateRowIndex(index + 1);
         setCarTarget({ label: undefined, coordinate: undefined});
     }
 
@@ -83,7 +86,7 @@ export default function Figure({ svgPath = "./src/assets/racetrack.svg" }: Props
             <Car pathCurve={pathCurve} targetPosition={carTarget.coordinate} onStopTarget={handleCarStop} isCarAtTargetState={isCarAtTargetState}/>
             <WorkBuilding/>
             <ObservationDeck/>
-            <FanSeating/>
+            <FanSeating animateRowIndex={animateRowIndex}/>
         </>
     )
 }

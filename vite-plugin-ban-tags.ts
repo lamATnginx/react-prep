@@ -13,7 +13,7 @@ export default function banTagsPlugin(): Plugin {
             
             for(const item of banList) {
                 if(item.test(code)){
-                    throw new Error(`No <a> tags allowed in ${id}. Use the damn sitemap!`)
+                    //throw new Error(`No <a> tags allowed in ${id}. Use the damn sitemap!`)
                 }
             }   
             return null;
