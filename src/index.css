@@ -1,3 +1,8 @@
+@font-face {
+    font-family: bebas;
+    src: url('./assets/fonts/BebasNeue-Regular.ttf');
+}
+
 @import "tailwindcss";
 
 @theme {
@@ -10,6 +15,9 @@
     --color-tartufo: #b77b5f;
     --color-ivory: #e3e3e5;
     --color-fjord: #88a8cf;
+
+    /* Fonts */
+    --font-bebas-neue: bebas, "sans-serif";
 }
 
 /* Safe-list for interior colors */

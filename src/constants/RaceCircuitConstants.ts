@@ -17,4 +17,4 @@ export const COLORS = {
     "SEATING_TEXT": "#00FF80"
 }
 
-export const FONT_PATH = "./src/assets/helvetiker_regular.typeface.json"
+export const FONT_PATH = "./src/assets/fonts/Bebas Neue_Regular.json"

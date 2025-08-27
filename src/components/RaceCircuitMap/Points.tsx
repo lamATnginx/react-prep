@@ -1,6 +1,5 @@
 import { COLORS } from "@/constants/RaceCircuitConstants";
 import { Html } from "@react-three/drei";
-import type { ThreeEvent } from "@react-three/fiber";
 
 interface Props {
     pointsData: {
@@ -10,21 +9,22 @@ interface Props {
 }
 
 export default function Points({ pointsData }: Props) {
-    const handlePointClick = (event: ThreeEvent<MouseEvent>) => {
-        console.log("Hi", (event))
+    const handlePointClick = (label: string) => {
+        console.log(label)
     }
 
     return (
         <>
             {
-                pointsData.map((point) => (         
+                pointsData.map((point, index) => (         
                     <mesh
-                        onClick={handlePointClick}
+                        key={`point_${index}`}
+                        onClick={() => handlePointClick(point.label)}
                         position={point.coordinate}
                         >
                         <sphereGeometry args={[4, 32, 32]} />
                         <meshStandardMaterial color={COLORS.POINT}/>
-                        <Html><p className="cursor-pointer text-xl">{point.label}</p></Html>
+                        <Html><p className="mt-2 ml-3 cursor-pointer text-3xl text-zinc-500 font-bebas-neue">{point.label}</p></Html>
                     </mesh>
                 ))
             }

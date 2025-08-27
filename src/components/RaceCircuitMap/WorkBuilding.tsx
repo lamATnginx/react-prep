@@ -6,6 +6,7 @@ import Text from './Text';
 
 export default function WorkBuilding() {
     const font = useLoader(FontLoader, FONT_PATH);
+    const fontSize = 12;
     const buildingWidth = 120;
     const buildinglength = 90;
     const buildingHeight = 10;
@@ -16,8 +17,8 @@ export default function WorkBuilding() {
                 <boxGeometry args={[buildingWidth, buildinglength, buildingHeight]}/>
                 <meshPhongMaterial color={COLORS.BUILDING}/>
             </mesh>
-            <Text text="Welcome to" font={font} size={11} width={-buildingWidth / 4 - 25} length={-buildinglength / 4 - 8} height={buildingHeight * 2} color="white" rotation={[convertToRadians(40), convertToRadians(-5), 0]}/>
-            <Text text="Lam's" font={font} size={11} width={-buildingWidth / 4} length={-buildinglength / 4 - 40} height={buildingHeight * 2} color={COLORS.BUILDING_TEXT} rotation={[convertToRadians(40), convertToRadians(-5), 0]}/>
+            <Text text="Welcome to" font={font} size={fontSize} width={-buildingWidth / 4 - 12} length={-buildinglength / 4 - 8} height={buildingHeight * 2} color="white" rotation={[convertToRadians(40), convertToRadians(-3), 0]}/>
+            <Text text="Lam's" font={font} size={fontSize} width={-buildingWidth / 4} length={-buildinglength / 4 - 39} height={buildingHeight * 2} color={COLORS.BUILDING_TEXT} rotation={[convertToRadians(40), convertToRadians(-5), 0]}/>
         </group>
     )
 }

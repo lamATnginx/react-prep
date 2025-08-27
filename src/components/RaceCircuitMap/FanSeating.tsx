@@ -36,7 +36,7 @@ export default function FanSeating() {
                         </mesh>
                     );
                 })}
-                <Text text="Track (Record)" font={font} width={-36} length={-8} height={numRows} color={COLORS.SEATING_TEXT} rotation={[convertToRadians(40), 0, 0]}/>
+                <Text text="Track (Record)" size={9} font={font} width={-34} length={-10} height={numRows} color={COLORS.SEATING_TEXT} rotation={[convertToRadians(40), 0, 0]}/>
             </group>
         </>
     )
