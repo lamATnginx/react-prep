@@ -22,28 +22,38 @@ export const COLORS = {
 
 export const FONT_PATH = "./src/assets/fonts/Bebas Neue_Regular.json";
 
-export const Card = ({ title, link = undefined, description }: { title: string, link?: string, description: string}) => {
+export const Card = ({ title, link = undefined, description, timeframeStrings }: { title: string, link?: string, description: string, timeframeStrings?: string[] }) => {
     return (
         <div className="flex flex-col gap-2 px-4 py-2">
-        <div className="flex flex-row justify-between gap-0.5">
-            <h1 className="font-bebas-neue text-xl flex-wrap">{title}</h1>
-            { link && <a target="_blank" rel="noreferrer" href={link}><Link/></a> }
+            <div className="flex flex-row justify-between gap-0.5">
+                <h1 className="font-bebas-neue text-2xl flex-wrap">{title}</h1>
+                { link && <a target="_blank" rel="noreferrer" href={link}><Link/></a> }
+            </div>
+            <p>{description}</p>
+            { 
+                timeframeStrings?.map((timeframe) => 
+                    <p key={`sticky_note-timeframe-${timeframe}`} className="font-bebas-neue text-lg">{timeframe}</p>
+                )
+            }
         </div>
-        <p>{description}</p>
-    </div>
     )
 }
 
 export const workData: ContentType = {
-    "NGINX": <div>
-        <p>I work at NGINX</p>
-    </div>,
-    "BMW Group": <div>
-        <p>I worked at the BMW Group</p>
-    </div>,
+    "NGINX":
+        <Card title="NGINX" link="https://www.f5.com/go/product/welcome-to-nginx" description="Working as a front-end engineer within the NGINX DocOps and NGINX One team to deliver awesome features for our AI chatbot and new documentation site." timeframeStrings={["09/2023 - Present"]} />,
+    "BMW Group":
+        <Card title="BMW Group" link="https://www.bmwgroup.com/en.html" description="Worked as a full-stack intern within the Digital Life Innovation team to deliver exciting apps to our in-vehicle experience." timeframeStrings={["01/2022 - 06/2022", "06/2023-09/2023"]} />,
+    "Resume":
+        <div className="flex flex-col gap-2 px-4 py-2">
+            <p className="font-bebas-neue text-2xl flex-wrap">Resume</p>
+            <p>Download <span className="text-blue-600 text-xl">here!</span></p>
+        </div>
 }
 
 export const projectsData: ContentType = {
+    "Personal Site": 
+        <Card title="Personal Site (aka this)" description="Personal website to simulate my professional life as a race track."/>,
     "All Keys": 
         <Card title="All Keys" link="https://github.com/lamnguynn/All-Keys" description="Published iOS app (now taken-down) for a password manager with auto-fill." />,
     "HalfModalViewController": 
@@ -53,6 +63,9 @@ export const projectsData: ContentType = {
 }
 
 export const meData: ContentType = {
-    "Lam": <Card title="Hi there!" description="This is some info about me"/>,
+    "Lam": 
+        <Card title="Hi there!" description="My name is Lam Nguyen, a front-end engineer - sometimes full-stack - that is passionate about delivering awesome products that enrich customer experiences. I also like cars :)"/>,
+    "LinkedIn":
+        <Card title="LinkedIn" link="https://www.linkedin.com/in/lamnguynn" description="Feel free to add me on LinkedIn. Or just lurk..."/>
 
 }

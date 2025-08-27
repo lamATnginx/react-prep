@@ -8,8 +8,10 @@ interface Props {
 
 export default function Content({ sectionTitle, data }: Props) {
     const content: ReactNode = useMemo(() => {
+        const keys = Object.keys(data);
+        const index = keys.findIndex((key) => key === sectionTitle);
         const key = Object.keys(data)[0];
-        if(sectionTitle) {
+        if(index > -1 && sectionTitle) {
             return data[sectionTitle];
         }
 
@@ -18,9 +20,7 @@ export default function Content({ sectionTitle, data }: Props) {
 
     return (
         <div className="bg-amber-300 w-full h-full">
-            {
-                content
-            }
+            {  content }
         </div>
     )
 }

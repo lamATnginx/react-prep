@@ -19,8 +19,8 @@ export default function Figure({ svgPath = "./src/assets/racetrack.svg" }: Props
     const pointsData: { label: string, coordinate: Vector3}[] =
         [
             {
-                label: "Work",
-                coordinate: [133, 20.2, Z_COORDINATE], // Work
+                label: "Career",
+                coordinate: [190, -21, Z_COORDINATE], // Career
             },
                 {
                 label: "Projects",
@@ -28,7 +28,7 @@ export default function Figure({ svgPath = "./src/assets/racetrack.svg" }: Props
             },
             {
                 label: "Me",
-                coordinate: [-194, -100, Z_COORDINATE], // Me
+                coordinate: [-150, -120, Z_COORDINATE], // Me
             }
         ];
 

@@ -6,11 +6,11 @@ import type { Rotation3 } from "@/types/RaceCircuitType";
 
 interface Props {
     data: string[],
-    onCircleClick?: (title: string) => void; 
+    onTireClick?: (title: string) => void; 
     onXClick?: () => void;
 }
 
-export default function Tires({ data, onCircleClick, onXClick }: Props) {
+export default function Tires({ data, onTireClick, onXClick }: Props) {
     const arcSpread = convertToRadians(50);
     const radius = -25;
     const xDisplacement = 50; // Shift the buttons left (positive)
@@ -18,8 +18,8 @@ export default function Tires({ data, onCircleClick, onXClick }: Props) {
     const shapeDepth = 2;
     const [currentIndex, setCurrentIndex] = useState<number | undefined>(undefined);
 
-    const handleCircleClick = (title: string, index: number) => {
-        if(onCircleClick) onCircleClick(title);
+    const handleTireClick = (title: string, index: number) => {
+        if(onTireClick) onTireClick(title);
         setCurrentIndex(index);
     }
     
@@ -36,16 +36,32 @@ export default function Tires({ data, onCircleClick, onXClick }: Props) {
                     const y = radius * Math.sin(individualArcAngle);
 
                     const { rotation } = useSpring({
-                        rotation: currentIndex === index ? [convertToRadians(90), 0, convertToRadians(0)] as Rotation3 : [convertToRadians(90), 0, 0] as Rotation3,
-                        config: { mass: 1, tension: 280, friction: 40, duration: 2000 },
+                        rotation: currentIndex === index ? [convertToRadians(90), 0, convertToRadians(360)] as Rotation3 : [convertToRadians(90), 0, 0] as Rotation3,
+                        config: { mass: 1, tension: 280, friction: 40, duration: 1000 },
                         loop: true,
                         onRest: () => setCurrentIndex(undefined),
                     });
 
-                    return <animated.mesh key={`feat_seating-button-${index}`} position={[x - xDisplacement, y - yDisplacement, 0]} rotation={rotation as never as Rotation3} onClick={() => handleCircleClick(title, index)}>
-                        <cylinderGeometry args={[5, 5, shapeDepth, 32]} />
-                        <meshStandardMaterial color={"slategrey"} roughness={0.9} metalness={0.75}/>
-                    </animated.mesh>
+                    return (
+                        <animated.group
+                            key={`feat_seating-button-${index}`}
+                            position={[x - xDisplacement, y - yDisplacement, 0]}
+                            rotation={rotation as never as Rotation3}
+                            onClick={() => handleTireClick(title, index)}
+                        >
+                            {/* Tire */}
+                            <mesh>
+                                <cylinderGeometry args={[5, 5, shapeDepth, 32]} />
+                                <meshStandardMaterial color={"black"} roughness={0.2} metalness={0.3} />
+                            </mesh>
+
+                            {/* Rim */}
+                            <mesh>
+                                <torusGeometry args={[0.1, 3, 16, 32]} />
+                                <meshStandardMaterial color={"white"} roughness={0.8} metalness={0.9} />
+                            </mesh>
+                        </animated.group>
+                    )
                 })
             }
 

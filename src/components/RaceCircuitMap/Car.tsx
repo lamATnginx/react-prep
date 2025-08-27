@@ -15,7 +15,7 @@ interface Props {
 export default function Car({ pathCurve, targetPosition, onStopTarget, isCarAtTarget, setIsCarAtTarget}: Props) {
     const carRef = useRef<Mesh | null>(null);
     const timeRef = useRef(0); 
-    const speed = 750;
+    const speed = 500;
 
     const moveFreely = (car: Mesh, t: number) => {
         const point = pathCurve.getPointAt(t);
