@@ -6,11 +6,12 @@ interface Props {
         label: string;
         coordinate: [x: number, y: number, z: number];
     }[];
+    onPointClick: (label: string, coordinate: [x: number, y: number, z: number]) => void
 }
 
-export default function Points({ pointsData }: Props) {
-    const handlePointClick = (label: string) => {
-        console.log(label)
+export default function Points({ pointsData, onPointClick }: Props) {
+    const handlePointClick = (label: string, coordinate: [x: number, y: number, z: number]) => {
+        onPointClick(label, coordinate);
     }
 
     return (
@@ -19,12 +20,12 @@ export default function Points({ pointsData }: Props) {
                 pointsData.map((point, index) => (         
                     <mesh
                         key={`point_${index}`}
-                        onClick={() => handlePointClick(point.label)}
+                        onClick={() => handlePointClick(point.label, point.coordinate)}
                         position={point.coordinate}
                         >
                         <sphereGeometry args={[4, 32, 32]} />
                         <meshStandardMaterial color={COLORS.POINT}/>
-                        <Html><p className="mt-2 ml-3 cursor-pointer text-3xl text-zinc-500 font-bebas-neue">{point.label}</p></Html>
+                        <Html><p onClick={() => handlePointClick(point.label, point.coordinate)} className="mt-2 ml-3 cursor-pointer text-3xl text-zinc-500 font-bebas-neue">{point.label}</p></Html>
                     </mesh>
                 ))
             }

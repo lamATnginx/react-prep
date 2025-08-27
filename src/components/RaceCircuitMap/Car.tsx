@@ -1,27 +1,44 @@
 import { COLORS } from "@/constants/RaceCircuitConstants";
+import { getDistanceVector3 } from "@/util/util";
 import { useFrame } from "@react-three/fiber";
-import { useRef } from "react";
+import { useRef, type Dispatch, type SetStateAction } from "react";
 import type { CatmullRomCurve3, Mesh } from "three";
-
 
 interface Props {
     pathCurve: CatmullRomCurve3;
+    targetPosition?: [number, number, number];
+    onStopTarget?: () => void;
+    isCarAtTargetState: [boolean, Dispatch<SetStateAction<boolean>>]
 }
 
-export default function Car({ pathCurve }: Props) {
+export default function Car({ pathCurve, targetPosition, onStopTarget, isCarAtTargetState }: Props) {
     const carRef = useRef<Mesh | null>(null);
+    const speed = 2000;
 
-    useFrame(() => {
-        const time = Date.now();
-        const t = ((time / 2000) % 6) / 6;
+    const moveFreely = (car: Mesh, t: number) => {
+        const point = pathCurve.getPointAt(t);
+        if(targetPosition) {
+            if(getDistanceVector3(targetPosition, point) < 3) {
+                isCarAtTargetState[1](true);
+                if(onStopTarget) onStopTarget();
+            }
+        }
 
-        if(carRef.current) {
-            const point = pathCurve.getPointAt(t);
-            carRef.current.position.set(point.x, point.y, point.z);
+        if(!isCarAtTargetState[0]) {
+            car.position.set(point.x, point.y, point.z);
 
             const tangent = pathCurve.getTangentAt(t);
             const lookAtPoint = point.clone().add(tangent);
-            carRef.current.lookAt(lookAtPoint); 
+            car.lookAt(lookAtPoint);
+        } 
+    }
+
+    useFrame(() => {
+        const time = Date.now();
+        const t = ((time / speed) % 6) / 6;
+
+        if(carRef.current) {
+            moveFreely(carRef.current, t);
         }
     });
     

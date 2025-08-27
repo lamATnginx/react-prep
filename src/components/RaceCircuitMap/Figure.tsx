@@ -1,5 +1,5 @@
 import { useLoader } from '@react-three/fiber'
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import * as THREE from "three";
 import { SVGLoader } from "three/examples/jsm/Addons.js";
 
@@ -31,6 +31,8 @@ export default function Figure({ svgPath = "./src/assets/racetrack.svg" }: Props
             }
         ];
 
+    const isCarAtTargetState = useState(false);
+    const [carTarget, setCarTarget] = useState<{label: string | undefined, coordinate: [x: number, y: number, z: number] | undefined}>({ label: undefined, coordinate: undefined })
     const svgData = useMemo(() => useLoader(SVGLoader, svgPath), [svgPath]);
     const shapes = svgData.paths.flatMap((path) => path.toShapes(true));
     const geometry = useMemo(() => {
@@ -60,14 +62,25 @@ export default function Figure({ svgPath = "./src/assets/racetrack.svg" }: Props
         return new THREE.EdgesGeometry(geometry); // Extract edges from geometry
     }, [geometry]);
 
+    const handlePointClick = (label: string, coordinate: [x: number, y: number, z: number]) => {
+        setCarTarget({
+            label,
+            coordinate
+        })
+    }
+
+    const handleCarStop = () => {
+        setCarTarget({ label: undefined, coordinate: undefined});
+    }
+
     return(
         <>
             <lineSegments geometry={edgesGeometry} scale={[1, 1, 1]}>
                 <lineBasicMaterial color={COLORS.TRACK} />
             </lineSegments>
 
-            <Points pointsData={pointsData} />
-            <Car pathCurve={pathCurve} />
+            <Points pointsData={pointsData} onPointClick={handlePointClick} />
+            <Car pathCurve={pathCurve} targetPosition={carTarget.coordinate} onStopTarget={handleCarStop} isCarAtTargetState={isCarAtTargetState}/>
             <WorkBuilding/>
             <ObservationDeck/>
             <FanSeating/>
