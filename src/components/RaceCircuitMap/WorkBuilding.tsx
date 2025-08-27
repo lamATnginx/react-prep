@@ -1,15 +1,15 @@
 import { COLORS, FONT_PATH } from '@/constants/RaceCircuitConstants';
 import { convertToRadians } from '@/util/util';
-import { useLoader } from '@react-three/fiber';
-import { FontLoader } from 'three/examples/jsm/Addons.js';
 import Text from './Text';
+import { FontLoader } from 'three/examples/jsm/Addons.js';
+import { useLoader } from '@react-three/fiber';
 
 export default function WorkBuilding() {
-    const font = useLoader(FontLoader, FONT_PATH);
     const fontSize = 12;
     const buildingWidth = 120;
     const buildinglength = 90;
     const buildingHeight = 10;
+    const font = useLoader(FontLoader, FONT_PATH);
 
     return (
         <group position={[110, 160, 0]}>

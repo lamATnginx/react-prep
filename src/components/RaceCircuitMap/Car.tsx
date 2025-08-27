@@ -8,23 +8,27 @@ interface Props {
     pathCurve: CatmullRomCurve3;
     targetPosition?: [number, number, number];
     onStopTarget?: () => void;
-    isCarAtTargetState: [boolean, Dispatch<SetStateAction<boolean>>]
+    isCarAtTarget: boolean;
+    setIsCarAtTarget: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function Car({ pathCurve, targetPosition, onStopTarget, isCarAtTargetState }: Props) {
+export default function Car({ pathCurve, targetPosition, onStopTarget, isCarAtTarget, setIsCarAtTarget}: Props) {
     const carRef = useRef<Mesh | null>(null);
-    const speed = 2000;
+    const timeRef = useRef(0); 
+    const speed = 750;
 
     const moveFreely = (car: Mesh, t: number) => {
         const point = pathCurve.getPointAt(t);
+        // Stop at the target if it exists AND call callback to slide out row
         if(targetPosition) {
             if(getDistanceVector3(targetPosition, point) < 3) {
-                isCarAtTargetState[1](true);
-                if(onStopTarget) onStopTarget();
+                setIsCarAtTarget(true);
             }
+            if(onStopTarget) onStopTarget();
         }
 
-        if(!isCarAtTargetState[0]) {
+        // Move freely if there is no target
+        if(!isCarAtTarget) {
             car.position.set(point.x, point.y, point.z);
 
             const tangent = pathCurve.getTangentAt(t);
@@ -33,12 +37,14 @@ export default function Car({ pathCurve, targetPosition, onStopTarget, isCarAtTa
         } 
     }
 
-    useFrame(() => {
-        const time = Date.now();
-        const t = ((time / speed) % 6) / 6;
+    useFrame((_, delta) => {
+        if(!isCarAtTarget) {
+            timeRef.current += delta * speed;
+            const t = ((timeRef.current) % 6000) / 6000;
 
-        if(carRef.current) {
-            moveFreely(carRef.current, t);
+            if(carRef.current) {
+                moveFreely(carRef.current, t);
+            }
         }
     });
     

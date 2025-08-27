@@ -1,20 +1,22 @@
-import { COLORS, FONT_PATH } from "@/constants/RaceCircuitConstants";
+import { COLORS, FONT_PATH, meData, projectsData, workData } from "@/constants/RaceCircuitConstants";
 import { convertToRadians } from "@/util/util";
 import { useLoader, useThree } from "@react-three/fiber";
-import { FontLoader } from 'three/examples/jsm/Addons.js';
 import Text from "./Text";
 import { animated, useSpring } from "@react-spring/three";
 import { Html } from "@react-three/drei";
 
-import Work from "@/components/Content/Work";
-import Projects from "@/components/Content/Projects";
-import Me from "@/components/Content/Me";
+import Tires from "./Tires";
+import type { Rotation3, Vector3 } from "@/types/RaceCircuitType";
+import { useState } from "react";
+import Content from "../Content/Content";
+import { FontLoader } from "three/examples/jsm/Addons.js";
 
 interface Props {
     animateRowIndex?: number | undefined
+    onXClick?: () => void
 }
 
-export default function FanSeating({ animateRowIndex }: Props) {
+export default function FanSeating({ animateRowIndex, onXClick }: Props) {
     const numRows = 5; // Must be an odd number
     const heightIncrement = 3;
     const depthIncrement = 5;
@@ -24,18 +26,44 @@ export default function FanSeating({ animateRowIndex }: Props) {
     const glassOpacity = 0.75;
     const zAngle = 18; // in degrees
     let dynamicHeight = rowHeight;
-    const font = useLoader(FontLoader, FONT_PATH);
     const pullOutDistance = 75;
     const { size, viewport } = useThree();
     const scale = size.width / viewport.width;
-    
+    const font = useLoader(FontLoader, FONT_PATH);
+
+    const [sectionTitle, setSectionTitle] = useState<string | undefined>(undefined);
     const { animatedPosition, animatedRotation } = useSpring({
         animatedPosition: animateRowIndex !== undefined
-            ? [0, animateRowIndex * heightIncrement - pullOutDistance, -(animateRowIndex * depthIncrement)] as [x: number, y: number, z: number]
-            : [0, 0, 0] as [x: number, y: number, z: number],
-        animatedRotation: animateRowIndex !== null ? [0, 0, convertToRadians(-zAngle - 5)] : [0, 0, 0],
+            ? [0, animateRowIndex * heightIncrement - pullOutDistance, -(animateRowIndex * depthIncrement)] as Vector3
+            : [0, 0, 0] as Vector3,
+        animatedRotation: animateRowIndex !== null ? [0, 0, convertToRadians(-zAngle - 5)] as Rotation3 : [0, 0, 0] as Rotation3,
         config: { friction: 40, tension: 80 }, 
     });
+
+    /**
+     * Extract both key and values from a certain dataset given an index.
+     * 
+     * @param index 
+     * @returns 
+     */
+    const getContent = (index: number) => {
+        return {
+            data: index === 1 ? workData : 
+                index === 2 ? projectsData :
+                index === 3 ? meData : {},
+            keys: index === 1 ?  Object.keys(workData) : 
+                index === 2 ?  Object.keys(projectsData) :
+                index === 3 ?  Object.keys(meData) : []
+        }
+    }
+
+    const handleCircleClick = (title: string) => {
+        setSectionTitle(title)
+    }
+
+    const handleXClick = () => {
+        if(onXClick) onXClick();
+    }
 
     return (
         <>
@@ -43,7 +71,8 @@ export default function FanSeating({ animateRowIndex }: Props) {
                 {Array.from({ length: numRows }).map((_, index) => {
                     const rowPositionY = index * heightIncrement;
                     const rowPositionZ = index * depthIncrement;
-                    const position: [x: number, y: number, z: number] = [0, rowPositionY, -rowPositionZ]
+                    const position: Vector3 = [0, rowPositionY, -rowPositionZ]
+                    const rotation: Rotation3 = [0, 0, 0]
 
                     if(index > 0) {
                         dynamicHeight += (heightIncrement * 2)
@@ -55,7 +84,7 @@ export default function FanSeating({ animateRowIndex }: Props) {
                         <animated.mesh
                             key={`fan_seating-row-${index}`}
                             position={isAnimatedRow ? animatedPosition : position}
-                            rotation={isAnimatedRow ? animatedRotation : [0, 0, 0]}
+                            rotation={isAnimatedRow ? animatedRotation as unknown as Rotation3 : rotation}
                         >
                             <boxGeometry args={[rowWidth, dynamicHeight, rowDepth]} />
                             <meshPhongMaterial
@@ -64,17 +93,14 @@ export default function FanSeating({ animateRowIndex }: Props) {
                                 opacity={index % 2 === 0 ? 1 : glassOpacity}
                             />
                             {
+                                /* Create the tire buttons to show content + the actual HTML content + title of the button clicked */
                                 animateRowIndex !== undefined && index === animateRowIndex && 
-                                <>
-                                    <Html className="sticky-note flex justify-start items-start bg-amber-200 p-4 ml-4" style={{ width: `${rowWidth * scale}px`, height: `${dynamicHeight * scale}px` }}>
-                                        {
-                                            index === 1 ? <Work/> :
-                                            index === 2 ? <Projects/> :
-                                            index === 3 ? <Me/> : 
-                                            <></>
-                                        }
+                                <> 
+                                    <Tires data={getContent(index).keys} onCircleClick={handleCircleClick} onXClick={handleXClick}/>
+                                    <Html className="sticky-note flex justify-start items-start bg-amber-200 p-2 sm:p-3 md:p-4 mt-2 ml-3" style={{ width: `${rowWidth * scale * 1}px`, height: "auto" }}>
+                                        <Content sectionTitle={sectionTitle} data={getContent(index).data}/>
                                     </Html>
-                                    <Text text={index === 1 ? "Work" : index === 2 ? "Projects" : "Me"} font={font} size={7} width={-30} length={5} height={2} color={index % 2 === 1 ? "slategrey" : COLORS.BUILDING_TEXT} rotation={[0, 0, 0]}/>
+                                    <Text text={`(of) ${index === 1 ? "Work" : index === 2 ? "Projects" : "Me"}`} font={font} size={7} width={-30} length={5} height={2} color={index % 2 === 1 ? "slategrey" : COLORS.BUILDING_TEXT} rotation={[0, 0, 0]}/>
                                 </>
                             }
                         </animated.mesh>

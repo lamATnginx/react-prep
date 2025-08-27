@@ -1,6 +1,7 @@
 import { COLORS } from "@/constants/RaceCircuitConstants";
+import type { Vector3 } from "@/types/RaceCircuitType";
 import { convertToRadians } from "@/util/util";
-import { Euler, Vector3 } from "three";
+import { Euler, Vector3 as ThreeVector3 } from "three";
 
 export default function ObservationDeck() {
     // Tower name - "The cocktail"
@@ -8,7 +9,7 @@ export default function ObservationDeck() {
     const numSupports = 8;
     const roofAngle = 26; // in degrees
     const towerAngle = 90; // in degrees
-    const towerPosition: [x: number, y: number, z: number] = [-200, -50, 20];
+    const towerPosition: Vector3 = [-200, -50, 20];
     const glassOpacity = 0.2;
 
     return (
@@ -23,8 +24,8 @@ export default function ObservationDeck() {
                     const z = Math.sin(angle) * baseRadius;
                     const platformHeight = 50;
                     const convergePoint = [0, -platformHeight / 2, 0]
-                    const topPosition = new Vector3(x, platformHeight, z);
-                    const bottomPosition = new Vector3(...convergePoint);
+                    const topPosition = new ThreeVector3(x, platformHeight, z);
+                    const bottomPosition = new ThreeVector3(...convergePoint);
                     const topRadius = 2 / 5;
                     const bottomRadius = 3 / 5;
 

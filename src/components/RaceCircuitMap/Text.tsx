@@ -1,3 +1,4 @@
+import type { Vector3 } from "@/types/RaceCircuitType";
 import { type Font, TextGeometry } from "three/examples/jsm/Addons.js"
 
 interface Props {
@@ -8,7 +9,7 @@ interface Props {
     length: number,
     height: number,
     color: string,
-    rotation: [x: number, y: number, z: number]
+    rotation: Vector3
 }
 
 export default function Text({ text, font, size = 7.5, width, length, height, color, rotation }: Props) {
